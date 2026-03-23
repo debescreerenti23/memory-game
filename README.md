@@ -27,7 +27,7 @@ JavaScript (ES6+): Lógica del juego, manipulación del DOM y gestión de estado
 
 🚀 Instalación y Uso
 
-Haz click aquí para lanzar el videojuego y ¿empieza a jugar!
+Haz click aquí [https://debescreerenti23.github.io/memory-game/] para lanzar el videojuego y ¿empieza a jugar!
 
 Desarrollado con ⚡ por javilindj.
 
