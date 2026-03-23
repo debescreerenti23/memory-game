@@ -3,27 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Memory Space Adventure</title>
+    <title>Space Memory Adventure - javilindj</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Evita que se seleccione texto o aparezca el menú contextual al mantener pulsado en móvil */
+        /* Optimizaciones para móviles */
         body {
             -webkit-tap-highlight-color: transparent;
             user-select: none;
             touch-action: manipulation;
+            background-color: #020617;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
 
-        /* Estilos para el efecto de volteo de las cartas */
+        /* Estructura 3D de la carta */
+        .card {
+            perspective: 1000px;
+        }
+
         .card-inner {
-            transition: transform 0.6s;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
             position: relative;
             width: 100%;
             height: 100%;
         }
+
         .card.flipped .card-inner {
             transform: rotateY(180deg);
         }
+
         .card-front, .card-back {
             position: absolute;
             width: 100%;
@@ -32,164 +42,147 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
         }
+
+        /* Lado oculto (Azul Galaxia) */
         .card-back {
-            background-color: #1e293b; 
-            border: 2px solid #334155;
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 3px solid #334155;
+            color: #38bdf8;
         }
+
+        /* Lado revelado (Blanco con icono) */
         .card-front {
-            background-color: white;
+            background-color: #ffffff;
             transform: rotateY(180deg);
+            border: 3px solid #f1f5f9;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-pop {
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
     </style>
 </head>
-<body class="bg-slate-950 min-h-screen font-sans text-white flex flex-col items-center p-4">
+<body class="min-h-screen text-white flex flex-col items-center p-4">
 
-    <!-- Encabezado del Juego -->
-    <header class="text-center my-6 md:my-8">
-        <h1 class="text-3xl md:text-4xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 uppercase">
+    <!-- Marcadores -->
+    <header class="text-center my-6 w-full max-w-md">
+        <h1 class="text-4xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 uppercase italic">
             Space Memory
         </h1>
-        <div class="flex gap-4 md:gap-8 mt-4 justify-center">
-            <div class="bg-slate-900 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-slate-800">
-                <span class="text-slate-400 text-[10px] md:text-xs uppercase font-bold tracking-wider">Intentos</span>
-                <span id="moves" class="ml-2 font-mono text-lg md:text-xl text-cyan-400">0</span>
+        
+        <div class="flex gap-4 mt-6 justify-center">
+            <div class="bg-slate-900/80 backdrop-blur-md px-6 py-3 rounded-2xl border border-slate-800 flex flex-col items-center flex-1">
+                <span class="text-slate-500 text-[10px] uppercase font-bold tracking-widest">Intentos</span>
+                <span id="moves" class="font-mono text-3xl text-cyan-400 leading-none mt-1">0</span>
             </div>
-            <div class="bg-slate-900 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-slate-800">
-                <span class="text-slate-400 text-[10px] md:text-xs uppercase font-bold tracking-wider">Aciertos</span>
-                <span id="matches" class="ml-2 font-mono text-lg md:text-xl text-emerald-400">0</span>
+            <div class="bg-slate-900/80 backdrop-blur-md px-6 py-3 rounded-2xl border border-slate-800 flex flex-col items-center flex-1">
+                <span class="text-slate-500 text-[10px] uppercase font-bold tracking-widest">Aciertos</span>
+                <span id="matches" class="font-mono text-3xl text-emerald-400 leading-none mt-1">0</span>
             </div>
         </div>
     </header>
 
-    <!-- Tablero de Juego -->
-    <main id="game-board" class="grid grid-cols-4 gap-2 md:gap-3 max-w-md w-full aspect-square">
-        <!-- Las cartas se generan dinámicamente -->
+    <!-- Tablero 4x4 -->
+    <main id="game-board" class="grid grid-cols-4 gap-3 max-w-md w-full aspect-square px-2">
+        <!-- Generado por JavaScript -->
     </main>
 
-    <div class="mt-8 md:mt-12 flex flex-col items-center gap-6 w-full">
-        <button onclick="resetGame()" class="w-full max-w-xs bg-gradient-to-b from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 px-8 py-3.5 rounded-2xl font-black shadow-lg shadow-cyan-900/20 transition-all transform active:scale-95 text-sm uppercase tracking-widest">
+    <!-- Botón y Firma -->
+    <div class="mt-16 flex flex-col items-center gap-10 w-full mb-10">
+        <!-- Botón actualizado a verde con mayor margen superior -->
+        <button onclick="resetGame()" class="w-full max-w-xs bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-emerald-900/40 transition-all active:scale-95 text-sm uppercase tracking-widest">
             Reiniciar Misión
         </button>
 
-        <!-- Footer Personalizado -->
-        <footer class="text-center pb-6">
-            <div class="h-px w-24 bg-gradient-to-r from-transparent via-slate-700 to-transparent mx-auto mb-4"></div>
-            <p class="text-slate-500 text-[10px] md:text-sm font-medium tracking-wide">
-                &copy; <span id="year"></span> <span class="text-cyan-500/80">javilindj</span> — Todos los derechos reservados
+        <footer class="text-center">
+            <div class="h-px w-32 bg-gradient-to-r from-transparent via-slate-700 to-transparent mx-auto mb-4"></div>
+            <p class="text-slate-500 text-xs font-bold tracking-widest uppercase">
+                &copy; <span id="year"></span> <span class="text-cyan-500">javilindj</span>
             </p>
         </footer>
     </div>
 
     <!-- Pantalla de Victoria -->
-    <div id="win-modal" class="fixed inset-0 bg-slate-950/95 hidden flex items-center justify-center z-50 p-6 backdrop-blur-sm">
-        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl text-center max-w-sm w-full shadow-2xl">
-            <div class="text-6xl mb-4 animate-bounce">🚀</div>
-            <h2 class="text-3xl font-black mb-2 text-white italic">¡MISIÓN CUMPLIDA!</h2>
-            <p class="text-slate-400 mb-8 text-sm">Entrenamiento de memoria galáctica finalizado con éxito.</p>
-            <button onclick="resetGame()" class="w-full py-4 bg-cyan-500 hover:bg-cyan-400 text-white font-black rounded-xl transition-colors shadow-lg shadow-cyan-500/20 uppercase tracking-widest">
-                Jugar otra vez
+    <div id="win-modal" class="fixed inset-0 bg-slate-950/95 hidden flex items-center justify-center z-50 p-6 backdrop-blur-xl">
+        <div class="bg-slate-900 border border-slate-800 p-10 rounded-[2.5rem] text-center max-w-sm w-full shadow-2xl animate-pop">
+            <div class="text-8xl mb-6">🚀</div>
+            <h2 class="text-4xl font-black mb-3 text-white tracking-tighter italic uppercase">¡ÉXITO!</h2>
+            <p class="text-slate-400 mb-8 text-sm leading-relaxed">Entrenamiento finalizado. El universo te espera, astronauta.</p>
+            <button onclick="resetGame()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-white font-black rounded-2xl uppercase tracking-widest shadow-lg shadow-emerald-500/30 transition-transform active:scale-95">
+                Nueva Misión
             </button>
         </div>
     </div>
 
     <script>
-        // Emojis de temática espacial
         const icons = ['🚀', '👨‍🚀', '👽', '🪐', '🌟', '📡', '🛰️', '☄️'];
         let flippedCards = [];
         let moves = 0;
         let matches = 0;
         let lockBoard = false;
 
-        const board = document.getElementById('game-board');
-        const movesEl = document.getElementById('moves');
-        const matchesEl = document.getElementById('matches');
-        const winModal = document.getElementById('win-modal');
-
         function init() {
-            // Actualizar año
             document.getElementById('year').textContent = new Date().getFullYear();
-
-            // Preparar iconos
-            const gameIcons = [...icons, ...icons];
-            gameIcons.sort(() => Math.random() - 0.5);
-
+            const gameIcons = [...icons, ...icons].sort(() => Math.random() - 0.5);
+            const board = document.getElementById('game-board');
             board.innerHTML = '';
+
             gameIcons.forEach((icon) => {
                 const card = document.createElement('div');
-                // Ajuste de altura responsivo: h-20 en móvil pequeño, h-24+ en normal
-                card.className = 'card cursor-pointer group h-20 sm:h-28';
+                card.className = 'card cursor-pointer h-24 sm:h-28';
                 card.dataset.icon = icon;
                 card.innerHTML = `
                     <div class="card-inner w-full h-full">
-                        <div class="card-back text-xl md:text-2xl">🌌</div>
-                        <div class="card-front text-3xl md:text-4xl">${icon}</div>
+                        <div class="card-back text-5xl sm:text-6xl">🌌</div>
+                        <div class="card-front text-5xl sm:text-6xl">${icon}</div>
                     </div>
                 `;
-                // Usamos touchstart para una respuesta más rápida en móvil (opcional, click suele bastar)
                 card.onclick = () => flipCard(card);
                 board.appendChild(card);
             });
         }
 
         function flipCard(card) {
-            if (lockBoard) return;
-            if (card.classList.contains('flipped')) return;
-            if (flippedCards.length === 2) return;
-
+            if (lockBoard || card.classList.contains('flipped') || flippedCards.length === 2) return;
             card.classList.add('flipped');
             flippedCards.push(card);
-
-            if (flippedCards.length === 2) {
-                checkMatch();
-            }
+            if (flippedCards.length === 2) checkMatch();
         }
 
         function checkMatch() {
             moves++;
-            movesEl.innerText = moves;
+            document.getElementById('moves').innerText = moves;
             lockBoard = true;
-
-            const [card1, card2] = flippedCards;
-            const isMatch = card1.dataset.icon === card2.dataset.icon;
-
-            if (isMatch) {
+            const [c1, c2] = flippedCards;
+            if (c1.dataset.icon === c2.dataset.icon) {
                 matches++;
-                matchesEl.innerText = matches;
-                disableCards();
-            } else {
-                unflipCards();
-            }
-        }
-
-        function disableCards() {
-            flippedCards = [];
-            lockBoard = false;
-            if (matches === icons.length) {
-                setTimeout(() => {
-                    winModal.classList.remove('hidden');
-                }, 600);
-            }
-        }
-
-        function unflipCards() {
-            setTimeout(() => {
-                flippedCards.forEach(card => card.classList.remove('flipped'));
+                document.getElementById('matches').innerText = matches;
                 flippedCards = [];
                 lockBoard = false;
-            }, 1000);
+                if (matches === icons.length) setTimeout(() => document.getElementById('win-modal').classList.remove('hidden'), 500);
+            } else {
+                setTimeout(() => {
+                    c1.classList.remove('flipped');
+                    c2.classList.remove('flipped');
+                    flippedCards = [];
+                    lockBoard = false;
+                }, 1000);
+            }
         }
 
         function resetGame() {
-            moves = 0;
-            matches = 0;
-            movesEl.innerText = '0';
-            matchesEl.innerText = '0';
-            flippedCards = [];
-            lockBoard = false;
-            winModal.classList.add('hidden');
+            moves = 0; matches = 0;
+            document.getElementById('moves').innerText = '0';
+            document.getElementById('matches').innerText = '0';
+            document.getElementById('win-modal').classList.add('hidden');
+            flippedCards = []; lockBoard = false;
             init();
         }
 
